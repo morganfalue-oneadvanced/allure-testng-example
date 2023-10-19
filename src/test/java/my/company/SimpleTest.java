@@ -13,6 +13,7 @@ public class SimpleTest {
     public void simpleTestOne() {
         step("step 1");
         step("step 2");
+        step("step 3");
     }
     @Test
     public void simpleTestTwo() {
