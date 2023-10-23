@@ -45,7 +45,7 @@ jobs:
         run: pwd && ls -R
         
       - name: github/workspace/ scan
-        run: pwd && ls -R
+        run: cd /github/workspace/ && pwd && ls -R
 
       - name: Allure Report with history
         uses: simple-elf/allure-report-action@v1.7
