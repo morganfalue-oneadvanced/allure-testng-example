@@ -39,15 +39,15 @@ jobs:
         continue-on-error: true
         with:
           ref: gh-pages
-          path: ./Tests/Services/gh_pages
+          path: Tests/Services/gh_pages
 
       - name: Allure Report with history
         uses: simple-elf/allure-report-action@v1.7
         if: always()
         id: allure-report
         with:
-          allure_results: target/allure-results
-          gh_pages: ./Tests/Service
+          allure_results: ./allure-results
+          gh_pages: Tests/Service/gh_pages
           allure_report: allure-report
           allure_history: allure-history
 
