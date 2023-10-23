@@ -16,7 +16,7 @@
     </properties>
 	
 	<modules>
-		<module>tests</module>
+		<module>Tests</module>
 	</modules>
 
     <name>Allure TestNG Example</name>
