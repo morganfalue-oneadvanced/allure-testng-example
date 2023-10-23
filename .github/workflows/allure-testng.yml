@@ -46,10 +46,10 @@ jobs:
         if: always()
         id: allure-report
         with:
-          allure_results: /github/workspace/Tests/Services/target/allure-results
-          gh_pages: /github/workspace/
-          allure_report: /github/workspace/allure-report
-          allure_history: /github/workspace/allure-history
+          allure_results: Tests/Services/target/allure-results
+          gh_pages: gh_pages
+          allure_report: Tests/Services/target/allure-report
+          allure_history: Tests/Services/target/allure-history
 
       - name: scan
         run: pwd && cd allure-testng-example/allure-testng-example && ls -r
@@ -60,4 +60,4 @@ jobs:
         env:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PUBLISH_BRANCH: gh-pages
-          PUBLISH_DIR: /home/runner/work/allure-testng-example/allure-testng-example/
+          PUBLISH_DIR: Tests/Services/target/allure-history
