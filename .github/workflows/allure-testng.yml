@@ -1,16 +1,8 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+name: run-tests-withreports
 
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: Java CI with Maven
-
-on:
+on: 
   push:
-    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -22,27 +14,47 @@ jobs:
       CLOUD_DB_PWD: root
       CLOUD_DB_SCHEMA: drscloud
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
         
-    - name: Start MySQL server
-      run: sudo /etc/init.d/mysql start
-      
-    - name: MySQL Schema creation
-      run: mysql --user=root --password=root --execute="CREATE DATABASE drsci;"
-      
-    - name: Build, Test and generate reports
-      run: mvn -T 6 -P ci -B test
-      
-    - name: Publish reports
-      uses: dorny/test-reporter@v1
-      if: success() || failure()    # run this step even if previous step failed
-      with:
-        name: JEST Tests            # Name of the check run which will be created
-        path: Tests/Services/target/surefire-reports/testng-*.xml
-        reporter: java-junit        # Format of test results
+      - name: Start MySQL server
+        run: sudo /etc/init.d/mysql start
+
+      - name: MySQL Schema creation
+        run: mysql --user=root --password=root --execute="CREATE DATABASE drsci;"
+
+      - name: Run Test
+        if: always()
+        run: mvn -T 6 package -P ci -B test
+        continue-on-error: true
+
+      - name: Get Allure history
+        uses: actions/checkout@v2
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh_pages
+
+      - name: Allure Report with history
+        uses: simple-elf/allure-report-action@v1.7
+        if: always()
+        id: allure-report
+        with:
+          allure_results: Tests/Services/target/allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+
+      - name: Deploy report to Github Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v2
+        env:
+          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: /home/runner/work/drs-cloud-ws/drs-cloud-ws/Tests/Services/allure-history
