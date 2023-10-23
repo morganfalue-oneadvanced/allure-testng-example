@@ -39,17 +39,17 @@ jobs:
         continue-on-error: true
         with:
           ref: gh-pages
-          path: gh_pages
+          path: ./Tests/Services/gh_pages
 
       - name: Allure Report with history
         uses: simple-elf/allure-report-action@v1.7
         if: always()
         id: allure-report
         with:
-          allure_results: ../Tests/Service/target/allure-results
-          gh_pages: gh_pages
-          allure_report: 3allure-report3
-          allure_history: 4allure-history4
+          allure_results: target/allure-results
+          gh_pages: ./Tests/Service
+          allure_report: allure-report
+          allure_history: allure-history
 
       - name: Deploy report to Github Pages
         if: always()
@@ -57,4 +57,4 @@ jobs:
         env:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PUBLISH_BRANCH: gh-pages
-          PUBLISH_DIR: /home/runner/work/drs-cloud-ws/drs-cloud-ws/Tests/Services/allure-history
+          PUBLISH_DIR: ./Tests/Service/target/allure-history
