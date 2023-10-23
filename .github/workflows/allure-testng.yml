@@ -46,10 +46,10 @@ jobs:
         if: always()
         id: allure-report
         with:
-          allure_results: Tests/Services/target/allure-results
-          gh_pages: gh-pages
-          allure_report: allure-report
-          allure_history: allure-history
+          allure_results: 1allure-results1
+          gh_pages: 2gh-pages2
+          allure_report: 3allure-report3
+          allure_history: 4allure-history4
 
       - name: Deploy report to Github Pages
         if: always()
