@@ -47,9 +47,12 @@ jobs:
         id: allure-report
         with:
           allure_results: /github/workspace/Tests/Services/target/allure-results
-          gh_pages: gh_pages
-          allure_report: allure-report
-          allure_history: allure-history
+          gh_pages: /github/workspace/
+          allure_report: /github/workspace/allure-report
+          allure_history: /github/workspace/allure-history
+
+      - name: scan
+        run: pwd && cd allure-testng-example/allure-testng-example && ls -r
 
       - name: Deploy report to Github Pages
         if: always()
