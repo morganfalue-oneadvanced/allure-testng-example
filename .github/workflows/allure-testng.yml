@@ -1,22 +1,36 @@
-name: allure-junit5-maven
+name: run-tests-withreports
 
-on: [ push ]
+on: 
+  push:
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env: 
+      MAVEN_OPTS: --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
+      CLOUD_DB_HOST: 127.0.0.1
+      CLOUD_DB_USER: root
+      CLOUD_DB_PWD: root
+      CLOUD_DB_SCHEMA: drscloud
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
-          java-version: '11'
-          distribution: 'adopt'
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+        
+      - name: Start MySQL server
+        run: sudo /etc/init.d/mysql start
+
+      - name: MySQL Schema creation
+        run: mysql --user=root --password=root --execute="CREATE DATABASE drsci;"
 
       - name: Run Test
         if: always()
-        run: mvn package
+        run: mvn -T 6 package -P ci -B test
         continue-on-error: true
 
       - name: Get Allure history
@@ -25,14 +39,14 @@ jobs:
         continue-on-error: true
         with:
           ref: gh-pages
-          path: gh-pages
+          path: gh_pages
 
       - name: Allure Report with history
-        uses: simple-elf/allure-report-action@v1.7    
+        uses: simple-elf/allure-report-action@v1.7
         if: always()
         id: allure-report
         with:
-          allure_results: target/allure-results
+          allure_results: Tests/Services/target/allure-results
           gh_pages: gh-pages
           allure_report: allure-report
           allure_history: allure-history
@@ -43,4 +57,4 @@ jobs:
         env:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PUBLISH_BRANCH: gh-pages
-          PUBLISH_DIR: allure-history
+          PUBLISH_DIR: /home/runner/work/drs-cloud-ws/drs-cloud-ws/Tests/Services/allure-history
