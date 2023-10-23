@@ -39,7 +39,7 @@ jobs:
         continue-on-error: true
         with:
           ref: gh-pages
-          path: 2gh_pages2
+          path: /home/runner/work/allure-testng-example/allure-testng-example/2gh_pages2
 
       - name: Allure Report with history
         uses: simple-elf/allure-report-action@v1.7
@@ -47,7 +47,7 @@ jobs:
         id: allure-report
         with:
           allure_results: Tests/Services/target/allure-results
-          gh_pages: 2gh-pages2
+          gh_pages: /home/runner/work/allure-testng-example/allure-testng-example/2gh_pages2
           allure_report: 3allure-report3
           allure_history: 4allure-history4
 
